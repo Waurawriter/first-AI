@@ -2,20 +2,21 @@
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
-<title>Chatbot</title>
+<title>Smart Chatbot</title>
 <style>
     body {
-        background: #f5f5f5;
+        background: #eef0f4;
         font-family: Arial, sans-serif;
         padding: 20px;
     }
     #chatbox {
         width: 100%;
-        height: 300px;
+        height: 350px;
         border: 1px solid #ccc;
         padding: 10px;
         overflow-y: auto;
         background: white;
+        border-radius: 8px;
     }
     #inputArea {
         margin-top: 10px;
@@ -24,7 +25,7 @@
 </head>
 
 <body>
-<h2>Polite Chatbot (switches on "Noot")</h2>
+<h2>Improved Chatbot (switches on "Noot")</h2>
 
 <div id="chatbox"></div>
 
@@ -34,15 +35,33 @@
 </div>
 
 <script>
+let chatHistory = [];
+
+function randomChoice(list) {
+    return list[Math.floor(Math.random() * list.length)];
+}
+
 function botResponse(message) {
     const lower = message.toLowerCase();
-    
+    const politeResponses = [
+        "Natuurlijk! Hoe kan ik je vandaag helpen?",
+        "Zeker! Wat wil je graag weten?",
+        "Met plezier! Waar kan ik je bij ondersteunen?",
+        "Ik ben er voor je. Wat heb je nodig?"
+    ];
+
+    const nootModeResponses = [
+        "Hm… oké, wat wil je precies?",
+        "Ja? Vertel maar gewoon.",
+        "Oke, ik luister. Wat is je vraag?",
+        "Noot-modus geactiveerd. Wat is het plan?"
+    ];
+
+    // Kies modus
     if (lower.includes("noot")) {
-        // Alternatieve persoonlijkheid: kort en direct
-        return "Oké… wat wil je precies?";
+        return randomChoice(nootModeResponses);
     } else {
-        // Beleefde persoonlijkheid
-        return "Natuurlijk! Hoe kan ik je helpen?";
+        return randomChoice(politeResponses);
     }
 }
 
@@ -50,16 +69,19 @@ function sendMessage() {
     const input = document.getElementById("userInput");
     const chatbox = document.getElementById("chatbox");
 
-    const userMsg = input.value;
-    if (userMsg.trim() === "") return;
+    const userMsg = input.value.trim();
+    if (userMsg === "") return;
+
+    chatHistory.push({role: "user", text: userMsg});
 
     chatbox.innerHTML += "<b>Jij:</b> " + userMsg + "<br>";
 
     const reply = botResponse(userMsg);
     chatbox.innerHTML += "<b>Bot:</b> " + reply + "<br><br>";
 
-    chatbox.scrollTop = chatbox.scrollHeight;
+    chatHistory.push({role: "bot", text: reply});
 
+    chatbox.scrollTop = chatbox.scrollHeight;
     input.value = "";
 }
 </script>
